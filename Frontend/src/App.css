@@ -1,7 +1,18 @@
 @import "tailwindcss";
 @import "tw-animate-css";
+@import "swiper/css/pagination";
+@import "swiper/css/scrollbar";
+@import "swiper/css";
+@import "swiper/css/effect-coverflow";
 
 @custom-variant dark (&:is(.dark *));
+
+@theme {
+  --color-dark-grey: #323540;
+  --color-baked-yellow: #d89f5f;
+  --color-blue-grey: #5f657b;
+  --color-green-gold: #b7a968;
+}
 
 @theme inline {
   --radius-sm: calc(var(--radius) - 4px);
@@ -113,6 +124,15 @@
 @layer base {
   * {
     @apply border-border outline-ring/50;
+  }
+  html,
+  body,
+  #root {
+    width: 100vw;
+    height: 100vh;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
   }
   body {
     @apply bg-background text-foreground;

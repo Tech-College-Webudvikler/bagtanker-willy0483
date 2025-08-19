@@ -76,11 +76,11 @@ function Index() {
           </SwiperSlide>
         ))}
       </Swiper>
-      <figcaption className="absolute overflow-auto z-20 flex flex-col gap-4 left-1/2 -translate-x-1/2 top-24 sm:top-32 md:top-40 md:left-40 md:-translate-x-0 w-[90vw] max-w-lg md:max-w-xl lg:max-w-2xl">
+      <figcaption className="absolute z-20 flex flex-col gap-4 left-1/2 -translate-x-1/2 top-50 md:top-60 md:left-50 md:-translate-x-0 w-[90vw] max-w-lg md:max-w-xl lg:max-w-2xl">
         <h2 className="text-green-gold text-2xl sm:text-3xl md:text-4xl font-bold drop-shadow-lg">
           Nyheder
         </h2>
-        <section className="overflow-auto max-h-100 sm:max-h-80 md:max-h-96 flex flex-col gap-4  bg-dark-grey/80 p-3 sm:p-4 md:p-6 rounded-md border-black border-2 text-white shadow-lg backdrop-blur-sm">
+        <section className="overflow-y-auto  max-h-100 sm:max-h-80 md:max-h-96 flex flex-col gap-4 bg-dark-grey/80 p-3 sm:p-4 md:p-6 rounded-md border-black border-2 text-white shadow-lg backdrop-blur-sm">
           {!isPending && data ? (
             // only the first three of the array
             data.slice(0, 3).map((item) => (

@@ -13,6 +13,7 @@ import { Route as siteRouteRouteImport } from './routes/(site)/route'
 import { Route as authRouteRouteImport } from './routes/(auth)/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as siteProductsIndexRouteImport } from './routes/(site)/products/index'
+import { Route as authSignupIndexRouteImport } from './routes/(auth)/signup/index'
 import { Route as authLoginIndexRouteImport } from './routes/(auth)/login/index'
 import { Route as siteProductsProductRouteImport } from './routes/(site)/products/$product'
 import { Route as siteProductsCategoryCategoryRouteImport } from './routes/(site)/products/category/$category'
@@ -35,6 +36,11 @@ const siteProductsIndexRoute = siteProductsIndexRouteImport.update({
   path: '/products/',
   getParentRoute: () => siteRouteRoute,
 } as any)
+const authSignupIndexRoute = authSignupIndexRouteImport.update({
+  id: '/signup/',
+  path: '/signup/',
+  getParentRoute: () => authRouteRoute,
+} as any)
 const authLoginIndexRoute = authLoginIndexRouteImport.update({
   id: '/login/',
   path: '/login/',
@@ -56,6 +62,7 @@ export interface FileRoutesByFullPath {
   '/': typeof siteRouteRouteWithChildren
   '/products/$product': typeof siteProductsProductRoute
   '/login': typeof authLoginIndexRoute
+  '/signup': typeof authSignupIndexRoute
   '/products': typeof siteProductsIndexRoute
   '/products/category/$category': typeof siteProductsCategoryCategoryRoute
 }
@@ -63,6 +70,7 @@ export interface FileRoutesByTo {
   '/': typeof siteRouteRouteWithChildren
   '/products/$product': typeof siteProductsProductRoute
   '/login': typeof authLoginIndexRoute
+  '/signup': typeof authSignupIndexRoute
   '/products': typeof siteProductsIndexRoute
   '/products/category/$category': typeof siteProductsCategoryCategoryRoute
 }
@@ -73,6 +81,7 @@ export interface FileRoutesById {
   '/(site)': typeof siteRouteRouteWithChildren
   '/(site)/products/$product': typeof siteProductsProductRoute
   '/(auth)/login/': typeof authLoginIndexRoute
+  '/(auth)/signup/': typeof authSignupIndexRoute
   '/(site)/products/': typeof siteProductsIndexRoute
   '/(site)/products/category/$category': typeof siteProductsCategoryCategoryRoute
 }
@@ -82,6 +91,7 @@ export interface FileRouteTypes {
     | '/'
     | '/products/$product'
     | '/login'
+    | '/signup'
     | '/products'
     | '/products/category/$category'
   fileRoutesByTo: FileRoutesByTo
@@ -89,6 +99,7 @@ export interface FileRouteTypes {
     | '/'
     | '/products/$product'
     | '/login'
+    | '/signup'
     | '/products'
     | '/products/category/$category'
   id:
@@ -98,6 +109,7 @@ export interface FileRouteTypes {
     | '/(site)'
     | '/(site)/products/$product'
     | '/(auth)/login/'
+    | '/(auth)/signup/'
     | '/(site)/products/'
     | '/(site)/products/category/$category'
   fileRoutesById: FileRoutesById
@@ -138,6 +150,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof siteProductsIndexRouteImport
       parentRoute: typeof siteRouteRoute
     }
+    '/(auth)/signup/': {
+      id: '/(auth)/signup/'
+      path: '/signup'
+      fullPath: '/signup'
+      preLoaderRoute: typeof authSignupIndexRouteImport
+      parentRoute: typeof authRouteRoute
+    }
     '/(auth)/login/': {
       id: '/(auth)/login/'
       path: '/login'
@@ -164,10 +183,12 @@ declare module '@tanstack/react-router' {
 
 interface authRouteRouteChildren {
   authLoginIndexRoute: typeof authLoginIndexRoute
+  authSignupIndexRoute: typeof authSignupIndexRoute
 }
 
 const authRouteRouteChildren: authRouteRouteChildren = {
   authLoginIndexRoute: authLoginIndexRoute,
+  authSignupIndexRoute: authSignupIndexRoute,
 }
 
 const authRouteRouteWithChildren = authRouteRoute._addFileChildren(

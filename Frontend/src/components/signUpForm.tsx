@@ -1,37 +1,45 @@
+// components/signUpForm.tsx
 import { useActionState } from "react";
-import { EyeIcon, EyeOffIcon, LockIcon, MailIcon } from "lucide-react";
-import { useState, useEffect } from "react";
-import { useAuth } from "@/lib/utils";
-import { login } from "@/lib/auth";
-import SubmitButton from "./submitButton";
+import {
+  EyeIcon,
+  EyeOffIcon,
+  LockIcon,
+  MailIcon,
+  UserIcon,
+} from "lucide-react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
+import { signup } from "@/lib/auth";
+import SubmitButton from "./submitButton";
 import { toast } from "sonner";
 
-export const LoginForm = () => {
-  const [state, action] = useActionState(login, undefined);
+export const SignUpForm = () => {
+  const [state, action] = useActionState(signup, undefined);
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
-  const { createSession } = useAuth();
 
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   useEffect(() => {
-    if (state?.success && state.session) {
-      createSession(state.session);
-      toast.success(`Welcome back, ${state.session.user.name}!`, {
-        id: "login-success",
+    if (state?.success) {
+      toast.success("Account created. Please log in.", {
+        id: "signup-success",
       });
-      navigate({ to: "/" });
+      navigate({ to: "/login" });
     }
-  }, [state?.success, navigate, state?.session, createSession]);
+  }, [state?.success, state?.message, navigate]);
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
 
   const errorMessage =
-    state?.message || state?.error?.email || state?.error?.password;
+    state?.message ||
+    state?.error?.name ||
+    state?.error?.email ||
+    state?.error?.password;
 
   return (
     <form
@@ -43,13 +51,28 @@ export const LoginForm = () => {
       )}
 
       <div className="relative flex items-center gap-2 rounded-md border border-gray-300 px-3 py-2 focus-within:ring-2 focus-within:ring-indigo-500">
+        <UserIcon className="h-5 w-5 text-gray-500" />
+        <input
+          type="text"
+          id="name"
+          name="name"
+          placeholder="Name"
+          className="flex-1 border-none outline-0 bg-transparent focus:ring-0 p-0"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          autoComplete="name"
+          required
+        />
+      </div>
+
+      <div className="relative flex items-center gap-2 rounded-md border border-gray-300 px-3 py-2 focus-within:ring-2 focus-within:ring-indigo-500">
         <MailIcon className="h-5 w-5 text-gray-500" />
         <input
           type="email"
           id="email"
           name="email"
           placeholder="Email"
-          className="flex-1 border-none outline-0 border-0 bg-transparent focus:ring-0 p-0"
+          className="flex-1 border-none outline-0 bg-transparent focus:ring-0 p-0"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           autoComplete="email"
@@ -67,7 +90,7 @@ export const LoginForm = () => {
           className="flex-1 border-none outline-0 bg-transparent focus:ring-0 p-0"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          autoComplete="current-password"
+          autoComplete="new-password"
           required
         />
         <button
@@ -83,15 +106,15 @@ export const LoginForm = () => {
         </button>
       </div>
 
-      <SubmitButton>Login In</SubmitButton>
+      <SubmitButton>Sign Up</SubmitButton>
 
       <div className="flex justify-center text-sm gap-1">
-        <p className="text-gray-600">Don&apos;t have an account?</p>
+        <p className="text-gray-600">Already have an account?</p>
         <a
           className="font-medium text-indigo-600 hover:underline"
-          href="/signup"
+          href="/login"
         >
-          Sign Up
+          Log In
         </a>
       </div>
     </form>

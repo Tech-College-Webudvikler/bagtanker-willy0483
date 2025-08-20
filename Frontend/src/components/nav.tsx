@@ -1,5 +1,5 @@
 import { Link, useLocation, useNavigate } from "@tanstack/react-router";
-import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet";
+import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "./ui/sheet";
 import { CiMenuFries } from "react-icons/ci";
 import { useAuth } from "@/lib/utils";
 
@@ -43,6 +43,8 @@ const Nav = () => {
         className="flex flex-col h-full"
         aria-describedby={undefined}
       >
+        <SheetTitle className="hidden">Navbar</SheetTitle>
+
         {/* nav */}
         <nav className="flex flex-col justify-center items-center gap-8 mx-10 mt-40">
           {links.map((link, index) => {

@@ -1,10 +1,14 @@
-import { Link, useLocation } from "@tanstack/react-router";
+import { Link, useLocation, useNavigate } from "@tanstack/react-router";
 import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet";
 import { CiMenuFries } from "react-icons/ci";
+import { useAuth } from "@/lib/utils";
 
 const Nav = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const pathname = location.pathname;
+  const { loginData, logout } = useAuth();
+  const isLoggedIn = !!loginData;
 
   const links = [
     {
@@ -23,11 +27,12 @@ const Nav = () => {
       name: "Kontakt",
       path: "/kontakt",
     },
-    {
-      name: "Login",
-      path: "/login",
-    },
   ];
+
+  const handleLogout = () => {
+    logout();
+    navigate({ to: "/login" });
+  };
 
   return (
     <Sheet>
@@ -51,6 +56,19 @@ const Nav = () => {
               </Link>
             );
           })}
+
+          {isLoggedIn ? (
+            <button onClick={handleLogout} className="hover:text-green-gold">
+              Logout
+            </button>
+          ) : (
+            <Link
+              to="/login"
+              className={`${pathname === "/login" && " text-green-gold border-b-2"} hover:cursor-pointer hover:text-green-gold`}
+            >
+              Login
+            </Link>
+          )}
         </nav>
       </SheetContent>
     </Sheet>

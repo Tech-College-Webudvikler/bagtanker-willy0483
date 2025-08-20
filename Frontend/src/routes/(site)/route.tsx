@@ -6,7 +6,7 @@ export const Route = createFileRoute("/(site)")({
 
 function RouteComponent() {
   return (
-    <div className="mt-[150px]">
+    <div>
       <Outlet />
     </div>
   );

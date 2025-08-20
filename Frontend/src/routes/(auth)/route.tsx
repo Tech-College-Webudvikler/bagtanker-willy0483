@@ -6,7 +6,7 @@ export const Route = createFileRoute("/(auth)")({
 
 function RouteComponent() {
   return (
-    <section className="container mx-auto min-h-screen flex items-center justify-center">
+    <section className="container mx-auto min-h-[calc(100vh-200px)] flex items-center justify-center">
       <Outlet />
     </section>
   );

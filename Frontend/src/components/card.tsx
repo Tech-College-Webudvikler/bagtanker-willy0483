@@ -12,8 +12,8 @@ const Card = ({ title, imageUrl, description, slug }: T_Product) => {
       <figcaption className="p-4 flex flex-col gap-2 justify-center md:flex-1">
         <p className="text-lg font-semibold text-gray-800">{title}</p>
         <article className="text-gray-600 text-sm">{description}</article>
-        <Link to={`/products/${slug}`}>
-          <button className="mt-2 px-4 py-2 bg-green-gold text-white rounded hover:bg-green-700 transition">
+        <Link to="/products/$product" params={{ product: slug }}>
+          <button className="hover:cursor-pointer mt-2 px-4 py-2 bg-green-gold text-white rounded hover:bg-green-700 transition">
             Læs mere
           </button>
         </Link>

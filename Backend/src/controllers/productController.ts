@@ -1,5 +1,5 @@
-import { Request, Response } from 'express';
-import { prisma } from '../prisma.js';
+import { Request, Response } from "express";
+import { prisma } from "../prisma.js";
 
 export const getRecords = async (req: Request, res: Response) => {
   try {
@@ -9,13 +9,14 @@ export const getRecords = async (req: Request, res: Response) => {
         title: true,
         slug: true,
         imageUrl: true,
-        price: true
-      }
+        price: true,
+        description: true,
+      },
     });
     res.json(data);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Failed to fetch products' });
+    res.status(500).json({ error: "Failed to fetch products" });
   }
 };
 
@@ -26,13 +27,13 @@ export const getRecordsByCategory = async (req: Request, res: Response) => {
         id: true,
         title: true,
         slug: true,
-        price: true
-      }
+        price: true,
+      },
     });
     res.json(data);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Failed to fetch products' });
+    res.status(500).json({ error: "Failed to fetch products" });
   }
 };
 
@@ -46,24 +47,23 @@ export const getRecord = async (req: Request, res: Response) => {
           include: {
             ingredients: {
               select: {
-                title: true
-              }
+                title: true,
+              },
             },
             units: {
               select: {
                 name: true,
-                abbreviation: true
-              }
-            }
-          
-          }
-        }
-      }
+                abbreviation: true,
+              },
+            },
+          },
+        },
+      },
     });
-    if (!data) res.status(404).json({ error: 'Product not found' });
+    if (!data) res.status(404).json({ error: "Product not found" });
     res.json(data);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Failed to fetch product' });
+    res.status(500).json({ error: "Failed to fetch product" });
   }
 };

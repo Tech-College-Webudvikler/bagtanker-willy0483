@@ -13,7 +13,7 @@ const Nav = () => {
     },
     {
       name: "Produkter",
-      path: "/produkter",
+      path: "/products",
     },
     {
       name: "Nyheder",

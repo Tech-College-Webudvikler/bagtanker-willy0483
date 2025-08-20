@@ -4,13 +4,12 @@ import { prisma } from "../prisma.js";
 export const getRecords = async (req: Request, res: Response) => {
   try {
     const data = await prisma.product.findMany({
-      select: {
-        id: true,
-        title: true,
-        slug: true,
-        imageUrl: true,
-        price: true,
-        description: true,
+      include: {
+        favorites: {
+          select: {
+            userId: true,
+          },
+        },
       },
     });
     res.json(data);
@@ -56,6 +55,16 @@ export const getRecord = async (req: Request, res: Response) => {
                 abbreviation: true,
               },
             },
+          },
+        },
+        favorites: {
+          select: {
+            userId: true,
+          },
+        },
+        reviews: {
+          where: {
+            isActive: true,
           },
         },
       },

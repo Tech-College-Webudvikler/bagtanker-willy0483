@@ -1,6 +1,5 @@
 {
-  "compilerOptions": 
-  {
+  "compilerOptions": {
     "target": "ES2020",
     "module": "ESNext",
     "moduleResolution": "Node",
@@ -10,5 +9,5 @@
     "strict": true,
     "skipLibCheck": true
   },
-  "include": ["src", "prisma"]
+  "include": ["src", "prisma", "../Frontend/src/providers"]
 }

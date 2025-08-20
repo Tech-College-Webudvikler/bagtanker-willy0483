@@ -33,7 +33,7 @@ function RouteComponent() {
     );
 
   return (
-    <div className=" container mx-auto">
+    <div className=" container my-4 mx-auto">
       {isPending ? (
         <Spinner />
       ) : (

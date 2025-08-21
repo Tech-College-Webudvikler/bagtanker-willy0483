@@ -1,6 +1,12 @@
 import { z } from "zod";
 import { BACKEND_URL } from "./constants";
-import { LoginFormSchema, SignupFormSchema, type FormState } from "./types";
+import {
+  LoginFormSchema,
+  ReviewFormSchema,
+  SignupFormSchema,
+  type createReviewState,
+  type FormState,
+} from "./types";
 
 export const login = async (
   _state: FormState,
@@ -88,6 +94,49 @@ export const signup = async (
       message:
         response.status === 409
           ? "The user already existed!"
+          : response.statusText,
+    };
+  }
+};
+
+export const createReview = async (
+  _state: createReviewState,
+  formData: FormData
+): Promise<createReviewState> => {
+  const validatedFields = ReviewFormSchema.safeParse({
+    title: formData.get("title"),
+    comment: formData.get("comment"),
+    numStars: Number(formData.get("numStars")),
+    productId: formData.get("productId"),
+  });
+
+  if (!validatedFields.success) {
+    const treeifiedErrors = z.treeifyError(validatedFields.error);
+    return {
+      error: {
+        title: treeifiedErrors.properties?.title?.errors,
+        comment: treeifiedErrors.properties?.comment?.errors,
+        numStars: treeifiedErrors.properties?.numStars?.errors,
+      },
+    };
+  }
+
+  const response = await fetch(`${BACKEND_URL}/reviews`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(validatedFields.data),
+  });
+
+  if (response.ok) {
+    const data = await response.json();
+    return { success: true, data };
+  } else {
+    return {
+      message:
+        response.status === 409
+          ? "Review already exists!"
           : response.statusText,
     };
   }

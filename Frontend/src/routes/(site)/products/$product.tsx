@@ -27,7 +27,6 @@ export const Route = createFileRoute("/(site)/products/$product")({
     };
   },
   pendingComponent: () => <Spinner />,
-  errorComponent: () => <div>Error...</div>,
 });
 
 function RouteComponent() {
@@ -38,9 +37,12 @@ function RouteComponent() {
 
   const { slug } = Route.useLoaderData();
 
-  const { data: item } = useSuspenseQuery(
-    createProductDetailsQueryOptions(slug)
-  );
+  const {
+    data: item,
+    isError,
+    error,
+    refetch,
+  } = useSuspenseQuery(createProductDetailsQueryOptions(slug));
 
   const { data: reviews } = useQuery(
     createReviewsDetailsQueryOptions(item?.id)
@@ -54,27 +56,46 @@ function RouteComponent() {
     }
   }, [state, item?.id, queryClient]);
 
+  if (isError)
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen bg-gray-900">
+        <div className="bg-dark-grey p-8 rounded-lg shadow-lg">
+          <p className="text-red-400 mb-4">Something went wrong.</p>
+          <p className="text-red-400">Error: {error.message}</p>
+          <button
+            className="bg-green-gold hover:cursor-pointer text-white px-4 py-2 rounded transition"
+            onClick={() => refetch()}
+          >
+            Try Again
+          </button>
+        </div>
+      </div>
+    );
+
   return (
     <>
-      <h3 className=" container mx-auto font-bold text-3xl py-8">
+      <h3 className="container mx-auto font-bold text-2xl sm:text-3xl py-6 sm:py-8">
         {item?.title}
       </h3>
-      <div className="container mx-auto grid grid-cols-10 gap-6">
-        <section className="col-span-7">
-          <figure className="grid grid-cols-2 gap-8">
+      <div className="container mx-auto grid grid-cols-1 lg:grid-cols-10 gap-6">
+        <section className="lg:col-span-7 col-span-1">
+          <figure className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8">
             <img
               src={item?.imageUrl}
               alt={item?.slug}
-              className="w-full h-full aspect-square"
+              className="w-full h-auto aspect-square object-cover rounded-lg"
             />
-            <figcaption>{item?.description}</figcaption>
+            <figcaption className="mt-2 md:mt-0">
+              {item?.description}
+            </figcaption>
           </figure>
           <article className="py-4">{item?.procedure}</article>
-
-          <p className="text-3xl font-extrabold">Pris: {item?.price},00 DK</p>
+          <p className="text-2xl sm:text-3xl font-extrabold mt-4">
+            Pris: {item?.price},00 DK
+          </p>
         </section>
-        <section className="col-span-3">
-          <div className="bg-blue-grey p-2 rounded-tl-2xl rounded-tr-2xl text-white text-2xl">
+        <section className="lg:col-span-3 col-span-1 mt-6 lg:mt-0">
+          <div className="bg-blue-grey p-2 rounded-tl-2xl rounded-tr-2xl text-white text-xl sm:text-2xl">
             <p>Opskrift</p>
           </div>
           <ul className="bg-[#F5F5F0] h-full text-blue-grey">
@@ -84,16 +105,14 @@ function RouteComponent() {
             <li className="border p-2 bg-[#D7D7D2] border-b-[#B1B1B1]">
               Antal {item?.amount} stk
             </li>
-
             {item?.productIngredients.map((item, index) => (
-              <li key={index} className={`border p-2 border-b-[#B1B1B1]`}>
+              <li key={index} className="border p-2 border-b-[#B1B1B1]">
                 {item.amount} {item.units.abbreviation} {item.ingredients.title}
               </li>
             ))}
           </ul>
         </section>
       </div>
-
       <section className=" container mx-auto">
         <p className="text-4xl font-extrabold mt-18 mb-2">Kommentarer</p>
         {loginData ? (

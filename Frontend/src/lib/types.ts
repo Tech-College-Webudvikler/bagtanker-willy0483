@@ -9,15 +9,6 @@ export interface T_News {
   createdAt: string;
 }
 
-export interface T_Product {
-  id: number;
-  title: string;
-  slug: string;
-  imageUrl: string;
-  price: number;
-  description: string;
-}
-
 export interface T_ProductDetails {
   id: number;
   title: string;
@@ -164,4 +155,34 @@ export interface Reviews_Create {
   numStars: number;
   productId: number;
   isActive: boolean;
+}
+
+export interface T_Category {
+  id: number;
+  title: string;
+  slug: string;
+  description: string;
+}
+export interface CategoryList {
+  id: number;
+  title: string;
+  slug: string;
+  description: string;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+  categoryProducts: CategoryProduct[];
+}
+
+export interface CategoryProduct {
+  products: T_Product;
+}
+
+export interface T_Product {
+  id: number;
+  title: string;
+  slug: string;
+  imageUrl: string;
+  price: number;
+  description: string;
 }

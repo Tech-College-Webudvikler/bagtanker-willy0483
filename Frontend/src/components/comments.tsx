@@ -1,5 +1,5 @@
 import type { T_Reviews } from "@/lib/types";
-import UserAvatar from "./UserAvatar";
+import UserAvatar from "./userAvatar";
 
 const Comments = ({ title, user, comment, createdAt }: T_Reviews) => {
   return (

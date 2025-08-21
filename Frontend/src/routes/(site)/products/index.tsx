@@ -8,7 +8,6 @@ import { createFileRoute } from "@tanstack/react-router";
 export const Route = createFileRoute("/(site)/products/")({
   component: RouteComponent,
   pendingComponent: () => <Spinner />,
-  errorComponent: () => <div>Error...</div>,
 });
 
 function RouteComponent() {

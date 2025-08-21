@@ -12,7 +12,7 @@ export interface AuthContextType {
   createSession: (payload: Session) => boolean;
   logout: () => boolean;
   loading: boolean;
-  checkAuth: () => Promise<string | undefined>;
+  checkAuth: () => Promise<boolean>;
 }
 
 export const useAuth = () => {

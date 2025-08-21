@@ -41,7 +41,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     return true;
   };
 
-  const checkAuth = async () => {
+  const checkAuth = async (): Promise<boolean> => {
     const sessionData = sessionStorage.getItem("session");
 
     if (!sessionData) {
@@ -56,18 +56,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       } else {
         logout();
         navigate({ to: "/login" });
-        return;
+        return false;
       }
     } catch (error) {
       console.error("Error parsing session data:", error);
       logout();
-      return "/auth/login";
+      navigate({ to: "/login" });
+      return false;
     }
 
     if (!user?.refreshToken) {
       logout();
       navigate({ to: "/login" });
-      return;
+      return false;
     }
 
     try {
@@ -82,15 +83,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       if (!response.ok) {
         logout();
         navigate({ to: "/login" });
-        return;
+        return false;
       }
 
-      return undefined;
+      return true;
     } catch (error) {
       console.error("Error verifying auth:", error);
       logout();
       navigate({ to: "/login" });
-      return;
+      return false;
     }
   };
 

@@ -1,6 +1,6 @@
-import { Request, Response } from 'express';
-import { prisma } from '../prisma.js';
-import { toBoolean } from '../utils/formatter.js';
+import { Request, Response } from "express";
+import { prisma } from "../prisma.js";
+import { toBoolean } from "../utils/formatter.js";
 
 export const getRecords = async (req: Request, res: Response) => {
   try {
@@ -8,12 +8,12 @@ export const getRecords = async (req: Request, res: Response) => {
     res.json(data);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Failed to fetch reviews' });
+    res.status(500).json({ error: "Failed to fetch reviews" });
   }
 };
 
 export const getRecord = async (req: Request, res: Response) => {
-  const { id } = req.params
+  const { id } = req.params;
   try {
     const data = await prisma.review.findUnique({
       where: {
@@ -23,21 +23,20 @@ export const getRecord = async (req: Request, res: Response) => {
         user: {
           select: {
             name: true,
-            email: true
-          }
-        }
-
-      }
+            email: true,
+          },
+        },
+      },
     });
-  res.json(data);
-} catch (error) {
-  console.error(error);
-  res.status(500).json({ error: 'Failed to fetch review' });
-}
+    res.json(data);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Failed to fetch review" });
+  }
 };
 
 export const getRecordsByProductId = async (req: Request, res: Response) => {
-  const { productId } = req.params
+  const { productId } = req.params;
   try {
     const data = await prisma.review.findMany({
       where: {
@@ -50,17 +49,18 @@ export const getRecordsByProductId = async (req: Request, res: Response) => {
         user: {
           select: {
             name: true,
-            email: true
-          }
-        }
+            email: true,
+            image: true,
+          },
+        },
+        createdAt: true,
       },
-
     });
 
     res.json(data);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Failed to fetch reviews' });
+    res.status(500).json({ error: "Failed to fetch reviews" });
   }
 };
 
@@ -70,7 +70,7 @@ export const createRecord = async (req: Request, res: Response) => {
   const { title, comment, numStars, productId, isActive } = req.body;
 
   if (!title || !comment || !numStars || !productId) {
-    res.status(400).json({ error: 'All fields are required' });
+    res.status(400).json({ error: "All fields are required" });
   }
 
   try {
@@ -81,13 +81,13 @@ export const createRecord = async (req: Request, res: Response) => {
         numStars: Number(numStars),
         userId: Number(userId),
         productId: Number(productId),
-        isActive: toBoolean(isActive)
+        isActive: toBoolean(isActive),
       },
     });
     res.status(201).json(data);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Failed to create review' });
+    res.status(500).json({ error: "Failed to create review" });
   }
 };
 
@@ -99,7 +99,7 @@ export const updateRecord = async (req: Request, res: Response) => {
     const dataToUpdate: any = {
       title,
       comment,
-      numStars: Number(numStars)
+      numStars: Number(numStars),
     };
 
     const data = await prisma.review.update({
@@ -110,7 +110,7 @@ export const updateRecord = async (req: Request, res: Response) => {
     res.status(200).json(data);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Failed to update review' });
+    res.status(500).json({ error: "Failed to update review" });
   }
 };
 
@@ -120,9 +120,9 @@ export const deleteRecord = async (req: Request, res: Response) => {
     await prisma.review.delete({
       where: { id: Number(id) },
     });
-    res.status(200).json({ message: 'Review deleted' });
+    res.status(200).json({ message: "Review deleted" });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Failed to delete review' });
+    res.status(500).json({ error: "Failed to delete review" });
   }
 };

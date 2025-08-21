@@ -1,9 +1,23 @@
 import { Spinner } from "@/components/spinner";
-import { createMessagesDetailsQueryOptions } from "@/queryOptions/createMessagesQueryOptions";
+import { createReviewsDetailsQueryOptions } from "@/queryOptions/createReviewsQueryOptions";
 import { createProductDetailsQueryOptions } from "@/queryOptions/createProductsQueryOptions";
 import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import Comments from "@/components/comments";
+import { useAuth } from "@/lib/utils";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+
+import { useActionState } from "react";
+import { createReview } from "@/lib/auth";
 import { useEffect } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 
 export const Route = createFileRoute("/(site)/products/$product")({
   component: RouteComponent,
@@ -17,21 +31,28 @@ export const Route = createFileRoute("/(site)/products/$product")({
 });
 
 function RouteComponent() {
+  const { loginData } = useAuth();
+
+  const [state, action] = useActionState(createReview, undefined);
+  const queryClient = useQueryClient();
+
   const { slug } = Route.useLoaderData();
 
   const { data: item } = useSuspenseQuery(
     createProductDetailsQueryOptions(slug)
   );
 
-  const { data: messages } = useQuery(
-    createMessagesDetailsQueryOptions(item?.id)
+  const { data: reviews } = useQuery(
+    createReviewsDetailsQueryOptions(item?.id)
   );
 
   useEffect(() => {
-    console.log(messages);
-  }, [messages]);
-
-  // todo fix messages is not array
+    if (state?.success) {
+      queryClient.invalidateQueries({
+        queryKey: createReviewsDetailsQueryOptions(item?.id).queryKey,
+      });
+    }
+  }, [state, item?.id, queryClient]);
 
   return (
     <>
@@ -50,7 +71,7 @@ function RouteComponent() {
           </figure>
           <article className="py-4">{item?.procedure}</article>
 
-          <p className="text-4xl font-extrabold">Pris: {item?.price},00 DK</p>
+          <p className="text-3xl font-extrabold">Pris: {item?.price},00 DK</p>
         </section>
         <section className="col-span-3">
           <div className="bg-blue-grey p-2 rounded-tl-2xl rounded-tr-2xl text-white text-2xl">
@@ -74,10 +95,100 @@ function RouteComponent() {
       </div>
 
       <section className=" container mx-auto">
-        <h3>Kommentarer</h3>
-        <ul>
-          {messages?.map((message) => <li key={message.id}>{message.name}</li>)}
-        </ul>
+        <p className="text-4xl font-extrabold mt-18 mb-2">Kommentarer</p>
+        {loginData ? (
+          <>
+            <Dialog>
+              <DialogTrigger asChild>
+                <button className="px-6 py-2 rounded-full bg-blue-600 text-white font-semibold shadow hover:bg-blue-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-400">
+                  Skriv en anmeldelse
+                </button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Skriv en anmeldelse</DialogTitle>
+                  <DialogDescription>
+                    Del din oplevelse med produktet. Din anmeldelse hjælper
+                    andre brugere!
+                  </DialogDescription>
+                </DialogHeader>
+                <form action={action} className="flex flex-col gap-4 mt-4">
+                  <input
+                    type="text"
+                    name="title"
+                    placeholder="Titel på anmeldelse"
+                    className="border rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                    required
+                  />
+                  {state?.error?.title && (
+                    <p className="text-sm text-red-500">{state.error.title}</p>
+                  )}
+                  <select
+                    name="numStars"
+                    className="border rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                    required
+                    defaultValue=""
+                  >
+                    {state?.error?.numStars && (
+                      <p className="text-sm text-red-500">
+                        {state.error.numStars}
+                      </p>
+                    )}
+                    <option value="" disabled>
+                      Vælg antal stjerner
+                    </option>
+                    <option value="1">1 stjerne</option>
+                    <option value="2">2 stjerner</option>
+                    <option value="3">3 stjerner</option>
+                    <option value="4">4 stjerner</option>
+                    <option value="5">5 stjerner</option>
+                  </select>
+                  <textarea
+                    name="comment"
+                    className="border rounded-lg p-2 min-h-[100px] focus:outline-none focus:ring-2 focus:ring-blue-400"
+                    placeholder="Skriv din anmeldelse her..."
+                    required
+                  />
+                  <input type="hidden" name="productId" value={item?.id} />
+                  {state?.error?.comment && (
+                    <p className="text-sm text-red-500">
+                      {state.error.comment}
+                    </p>
+                  )}
+                  <button
+                    type="submit"
+                    className="self-end px-6 py-2 rounded-full bg-blue-600 text-white font-semibold shadow hover:bg-blue-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                  >
+                    Send anmeldelse
+                  </button>
+                </form>
+              </DialogContent>
+            </Dialog>
+
+            <ul>
+              {reviews?.map((item, index) => (
+                <li key={index}>
+                  <Comments
+                    title={item.title}
+                    comment={item.comment}
+                    numStars={item.numStars}
+                    user={item.user}
+                    createdAt={item.createdAt}
+                  />
+                </li>
+              ))}
+            </ul>
+          </>
+        ) : (
+          <div className="flex justify-center items-center py-8">
+            <Link
+              to="/login"
+              className="px-6 hover:cursor-pointer py-2 rounded-full bg-blue-600 text-white font-semibold shadow hover:bg-blue-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-400"
+            >
+              Login for at kommentere
+            </Link>
+          </div>
+        )}
       </section>
     </>
   );

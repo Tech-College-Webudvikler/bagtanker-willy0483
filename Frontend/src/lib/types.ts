@@ -75,6 +75,20 @@ export type FormState =
     }
   | undefined;
 
+export type createReviewState =
+  | {
+      error?: {
+        title?: string[];
+        comment?: string[];
+        numStars?: string[];
+      };
+      message?: string;
+      success?: boolean;
+      session?: Session;
+      data?: Reviews_Create;
+    }
+  | undefined;
+
 export const LoginFormSchema = z.object({
   email: z.email({ message: "Please enter a valid email." }),
   password: z.string().min(1, {
@@ -105,6 +119,13 @@ export const SignupFormSchema = z.object({
     .trim(),
 });
 
+export const ReviewFormSchema = z.object({
+  title: z.string().min(1, { message: "Titel må ikke være tom." }),
+  comment: z.string().min(1, { message: "Kommentar må ikke være tom." }),
+  numStars: z.number().min(1, { message: "Vælg antal stjerner." }),
+  productId: z.number(),
+});
+
 export interface Session {
   accessToken: string;
   refreshToken: string;
@@ -121,4 +142,26 @@ export interface CreateUser {
 export interface User {
   id: number;
   name: string;
+}
+
+export interface T_Reviews {
+  title: string;
+  comment: string;
+  numStars: number;
+  user: Reviews_User;
+  createdAt: string;
+}
+
+export interface Reviews_User {
+  name: string;
+  email: string;
+  image: string;
+}
+
+export interface Reviews_Create {
+  title: string;
+  comment: string;
+  numStars: number;
+  productId: number;
+  isActive: boolean;
 }
